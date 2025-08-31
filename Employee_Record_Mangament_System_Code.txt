@@ -1,0 +1,300 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 5   // maximum employees
+
+// structure for employee
+struct Employee {
+    int id;
+    char name[50];
+    char dob[15];
+    char phone[15];
+    char email[30];
+};
+
+// display all employees
+void displayEmployees(struct Employee emp[], int n) {
+    if (n == 0) {
+        printf("\nNo employees to display!\n");
+        return;
+    }
+    printf("\n%-5s %-20s %-12s %-15s %-20s\n", "ID", "Name", "DOB", "Phone", "Email");
+    printf("-----------------------------------------------------------------------------\n");
+    for (int i = 0; i < n; i++) {
+        printf("%-5d %-20s %-12s %-15s %-20s\n", 
+            emp[i].id, emp[i].name, emp[i].dob, emp[i].phone, emp[i].email);
+    }
+}
+
+// search by ID
+void searchByID(struct Employee emp[], int n, int id) {
+    int found = 0;
+    for (int i = 0; i < n; i++) {
+        if (emp[i].id == id) {
+            printf("\nEmployee Found:\n");
+            printf("ID: %d\nName: %s\nDOB: %s\nPhone: %s\nEmail: %s\n", 
+                emp[i].id, emp[i].name, emp[i].dob, emp[i].phone, emp[i].email);
+            found = 1;
+        }
+    }
+    if (!found) printf("\nNo employee found with ID %d\n", id);
+}
+
+// search by Name (show all matches)
+void searchByName(struct Employee emp[], int n, char name[]) {
+    int found = 0;
+    for (int i = 0; i < n; i++) {
+        if (strcmp(emp[i].name, name) == 0) {
+            if (!found) printf("\nEmployee(s) Found:\n");
+            printf("ID: %d | Name: %s | DOB: %s | Phone: %s | Email: %s\n", 
+                emp[i].id, emp[i].name, emp[i].dob, emp[i].phone, emp[i].email);
+            found = 1;
+        }
+    }
+    if (!found) printf("\nNo employee found with name \"%s\"\n", name);
+}
+
+// search by Email
+void searchByEmail(struct Employee emp[], int n, char email[]) {
+    int found = 0;
+    for (int i = 0; i < n; i++) {
+        if (strcmp(emp[i].email, email) == 0) {
+            printf("\nEmployee Found:\n");
+            printf("ID: %d\nName: %s\nDOB: %s\nPhone: %s\nEmail: %s\n", 
+                emp[i].id, emp[i].name, emp[i].dob, emp[i].phone, emp[i].email);
+            found = 1;
+        }
+    }
+    if (!found) printf("\nNo employee found with email \"%s\"\n", email);
+}
+
+// sort by ID
+void sortByID(struct Employee emp[], int n) {
+    struct Employee temp;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (emp[i].id > emp[j].id) {
+                temp = emp[i];
+                emp[i] = emp[j];
+                emp[j] = temp;
+            }
+        }
+    }
+}
+
+// sort by Name
+void sortByName(struct Employee emp[], int n) {
+    struct Employee temp;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(emp[i].name, emp[j].name) > 0) {
+                temp = emp[i];
+                emp[i] = emp[j];
+                emp[j] = temp;
+            }
+        }
+    }
+}
+
+// sort by Email
+void sortByEmail(struct Employee emp[], int n) {
+    struct Employee temp;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(emp[i].email, emp[j].email) > 0) {
+                temp = emp[i];
+                emp[i] = emp[j];
+                emp[j] = temp;
+            }
+        }
+    }
+}
+
+// insert new employee
+void insertEmployee(struct Employee emp[], int *n) {
+    if (*n >= MAX) {
+        printf("\nCannot insert more employees. Max limit reached!\n");
+        return;
+    }
+
+    printf("\nEnter details for new employee:\n");
+    printf("ID: ");
+    scanf("%d", &emp[*n].id);
+    getchar();
+
+    printf("Full Name: ");
+    fgets(emp[*n].name, sizeof(emp[*n].name), stdin);
+    emp[*n].name[strcspn(emp[*n].name, "\n")] = '\0';
+
+    printf("Date of Birth (dd/mm/yyyy): ");
+    scanf("%s", emp[*n].dob);
+
+    printf("Phone Number: ");
+    scanf("%s", emp[*n].phone);
+
+    printf("Email ID: ");
+    scanf("%s", emp[*n].email);
+    getchar();
+
+    (*n)++;
+    printf("\nEmployee added successfully!\n");
+}
+
+// delete employee by ID
+void deleteEmployee(struct Employee emp[], int *n, int id) {
+    int found = 0;
+    for (int i = 0; i < *n; i++) {
+        if (emp[i].id == id) {
+            found = 1;
+            for (int j = i; j < *n - 1; j++) {
+                emp[j] = emp[j + 1];
+            }
+            (*n)--;
+            printf("\nEmployee with ID %d deleted successfully!\n", id);
+            break;
+        }
+    }
+    if (!found) {
+        printf("\nNo employee found with ID %d\n", id);
+    }
+}
+
+void updateEmployee(struct Employee emp[], int n, int id) {
+    int found = 0;
+    for (int i = 0; i < n; i++) {
+        if (emp[i].id == id) {
+            found = 1;
+            printf("\nUpdating employee with ID %d\n", id);
+
+            printf("Enter new Full Name: ");
+            fgets(emp[i].name, sizeof(emp[i].name), stdin);
+            emp[i].name[strcspn(emp[i].name, "\n")] = '\0';
+
+            printf("Enter new DOB (dd/mm/yyyy): ");
+            fgets(emp[i].dob, sizeof(emp[i].dob), stdin);
+            emp[i].dob[strcspn(emp[i].dob, "\n")] = '\0';
+
+            printf("Enter new Phone Number: ");
+            fgets(emp[i].phone, sizeof(emp[i].phone), stdin);
+            emp[i].phone[strcspn(emp[i].phone, "\n")] = '\0';
+
+            printf("Enter new Email ID: ");
+            fgets(emp[i].email, sizeof(emp[i].email), stdin);
+            emp[i].email[strcspn(emp[i].email, "\n")] = '\0';
+
+            printf("\nEmployee updated successfully!\n");
+            break;
+        }
+    }
+    if (!found) printf("\nNo employee found with ID %d\n", id);
+}
+
+int main() {
+    struct Employee emp[MAX];
+    int n, choice, id;
+    char name[50], email[30];
+
+    printf("Enter number of employees (max %d): ", MAX);
+    scanf("%d", &n);
+    getchar(); // clear buffer
+
+    for (int i = 0; i < n; i++) {
+        printf("\nEmployee %d:\n", i + 1);
+        printf("ID: ");
+        scanf("%d", &emp[i].id);
+        getchar();
+
+        printf("Full Name: ");
+        fgets(emp[i].name, sizeof(emp[i].name), stdin);
+        emp[i].name[strcspn(emp[i].name, "\n")] = '\0';
+
+        printf("Date of Birth (dd/mm/yyyy): ");
+        scanf("%s", emp[i].dob);
+
+        printf("Phone Number: ");
+        scanf("%s", emp[i].phone);
+
+        printf("Email ID: ");
+        scanf("%s", emp[i].email);
+        getchar();
+    }
+
+    do {
+        printf("\n===== Employee Record Management =====\n");
+        printf("1. Display All Employees\n");
+        printf("2. Search by ID\n");
+        printf("3. Search by Name\n");
+        printf("4. Search by Email\n");
+        printf("5. Sort by ID\n");
+        printf("6. Sort by Name\n");
+        printf("7. Sort by Email\n");
+        printf("8. Insert Employee\n");
+        printf("9. Delete Employee\n");
+        printf("10. Update Employee\n");
+        printf("11. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        getchar();
+
+        switch(choice) {
+            case 1:
+                displayEmployees(emp, n);
+                break;
+            case 2:
+                printf("Enter ID: ");
+                scanf("%d", &id);
+                searchByID(emp, n, id);
+                break;
+            case 3:
+                printf("Enter Name: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                searchByName(emp, n, name);
+                break;
+            case 4:
+                printf("Enter Email: ");
+                scanf("%s", email);
+                searchByEmail(emp, n, email);
+                break;
+            case 5:
+                sortByID(emp, n);
+                printf("\nEmployees sorted by ID.\n");
+                displayEmployees(emp, n);
+                break;
+            case 6:
+                sortByName(emp, n);
+                printf("\nEmployees sorted by Name.\n");
+                displayEmployees(emp, n);
+                break;
+            case 7:
+                sortByEmail(emp, n);
+                printf("\nEmployees sorted by Email.\n");
+                displayEmployees(emp, n);
+                break;
+            case 8:
+                insertEmployee(emp, &n);
+                break;
+            case 9:
+                printf("Enter ID of employee to delete: ");
+                scanf("%d", &id);
+                deleteEmployee(emp, &n, id);
+                break;
+            case 10: 
+                printf("Enter ID to update: ");
+                scanf("%d", &id); getchar(); 
+                updateEmployee(emp, n, id); 
+                break;
+            case 11:
+                printf("Exiting program...\n");
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while(choice != 11);
+
+    return 0;
+}
+
+
+
+
